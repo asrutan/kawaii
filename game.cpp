@@ -6,6 +6,8 @@
 #include <cmath>
 #include "game.h"
 #include "hud.h"
+#include "movement.h"
+#include "player.h"
 
 using namespace std;
 
@@ -21,6 +23,7 @@ Game::Game()
     window = NULL;
     surface = NULL;
     renderer = NULL;
+    playerTexture = NULL;
 } //end constructor
 
 Game::~Game()
@@ -43,7 +46,7 @@ bool Game::init()
     } //end if
     else
     {
-	window = SDL_CreateWindow("Shooter", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow("Kawaii", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
 	if(window == NULL)
 	{
 	    printf("Window Can't Be Created Fool");
@@ -67,6 +70,28 @@ bool Game::init()
     return success;
 } //end init
 
+bool Game::loadTextures()
+{
+    cout << "hello" << endl;
+    bool success = true;
+    surface = SDL_LoadBMP("player.bmp");
+    if(surface == NULL)
+    {
+	printf("Couldn't load textures sry :(");
+	cout << SDL_GetError() << endl;
+	success = false;
+    } //end if
+    else{
+        playerTexture = SDL_CreateTextureFromSurface(renderer, surface);
+	if(playerTexture == NULL)
+	{
+	    success = false;
+	} //end if
+    } //end else
+    return success;
+} //end loadTextures
+
+
 /*
 Destroy each of the textures, surface, window, and renderer
 Otherwise things hang around in memory
@@ -83,31 +108,13 @@ void Game::close()
     SDL_DestroyWindow(window);
     window = NULL;
 
+    SDL_DestroyTexture(playerTexture);
+    playerTexture = NULL;
+
+    //IMG_Quit(); this library is not currently installed
     SDL_Quit();
 } //end close
 
-void Game::rotate(bool right)
-{
-    if(right)
-    {
-	playerDir = playerDir + 10;
-	if(playerDir > 360)
-	{
-	    playerDir = 0;
-	} //end if
-    } //end if
-    else
-    {
-	playerDir = playerDir - 10;
-        if(playerDir < 0)
-	{
-	    playerDir = 360;
-	} //end if
-    } //end if
-    dy = sin(M_PI/180 * playerDir);
-    dx = cos(M_PI/180 * playerDir);
-
-} // end rotate
 
 /*
 First, take each of the textures and assign them to their own specific rectangles to be drawn later
@@ -117,27 +124,21 @@ Create an instance of camera and send it values for number of rays and player's 
 Create an instance of SDL_Event for player input, events change bools to "true"
  */
 int Game::run()
-{
-    SDL_Event event;
-    
-    bool forward = false;
-    bool backward = false;
-    bool sleft = false;
-    bool sright = false;
-    bool rrotate = false;
-    bool lrotate = false;
-
-    playerx = resX/2;
-    playery = resY/2;
-    playerDir = 0;
-
-    wallx1 = 50;
-    wally1 = 80;
-    wallx2 = 90; 
-    wally2 = 40;
-
+{   
+    Player player;
     Hud hud;
-    hud.init(&playerx);
+    //hud.init(&playerx);
+
+    SDL_Rect srcPlayerRect;
+    SDL_Rect dstPlayerRect;
+    srcPlayerRect.x = 0;
+    srcPlayerRect.y = 0;
+    srcPlayerRect.w = 400;
+    srcPlayerRect.h = 854;
+    dstPlayerRect.x = 0;
+    dstPlayerRect.y = 0;
+    dstPlayerRect.w = 100;
+    dstPlayerRect.h = 213;
 
     if (!init())
     {
@@ -148,180 +149,40 @@ int Game::run()
         bool keepGoing = true;
         while(keepGoing)
         {
-	    while(SDL_PollEvent(&event) != 0)
-		{
-		    if(event.type == SDL_KEYDOWN)
-		    {	
-			if(event.key.keysym.sym == SDLK_ESCAPE)
-			{
-			    keepGoing = false;
-			} //end if
-			if(event.key.keysym.sym == SDLK_w)
-			{
-			    forward = true;
-		       	} //end if
-			if(event.key.keysym.sym == SDLK_s)
-			{
-			    backward = true;
-			} //end if
-			if(event.key.keysym.sym == SDLK_a)
-			{
-			    sleft = true;
-		       	} //end if
-			if(event.key.keysym.sym == SDLK_d)
-			{
-			    sright = true;
-			} //end if
-			if(event.key.keysym.sym == SDLK_RIGHT)
-			{
-			    rrotate = true;
-			} //end if
-			if(event.key.keysym.sym == SDLK_LEFT)
-			{
-			    lrotate = true;
-			} //end if
-		    } //end if
+	    player.update();
+	    if(player.quit)
+	    {
+		keepGoing = false;
+	    } //end if
+	      
+	    SDL_UpdateWindowSurface(window);	
+	    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
+	    SDL_RenderClear(renderer);		  
+	    
+	    //dstPlayerRect.x = player.x;
+	    //dstPlayerRect.y = player.y;
 
-		    if(event.type == SDL_KEYUP)
-		    {	
-			if(event.key.keysym.sym == SDLK_w)
-			{
-			    forward = false;
-		       	} //end if
-			if(event.key.keysym.sym == SDLK_s)
-			{
-			    backward = false;
-			} //end if
-			if(event.key.keysym.sym == SDLK_a)
-			{
-			    sleft = false;
-		       	} //end if
-			if(event.key.keysym.sym == SDLK_d)
-			{
-			    sright = false;
-			} //end if
-			if(event.key.keysym.sym == SDLK_RIGHT)
-			{
-			    rrotate = false;
-			} //end if
-			if(event.key.keysym.sym == SDLK_LEFT)
-			{
-			    lrotate = false;
-			} //end if
-		    } //end if
-		} //end while
-		
-		/*
-		  Update the surface on which everything is drawn every loop
-		  Set the draw color to the color of the ceiling and then clear the screen, which turns the whole screen that color
-		 */
-		SDL_UpdateWindowSurface(window);	
-		SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);		
-		SDL_RenderClear(renderer);
-		
-		/*
-		  Calls the functions in player that are associated with inputs
-		 */
-		/*		if(forward)
-		{
-		    //    forward = false;
-		    p.move (1);
-		} //end if
-		if(backward)
-		{
-		    //    backward = false;
-		    p.move (0);
-		} //end if
-		if(sleft)
-		{
-		    // sleft = false;
-		    p.move (1);
-		} //end if
-		if(sright)
-		{
-		    // sright = false;
-		    p.move (0);
-		} //end if
-		if(rrotate)
-		{
-		    p.rotate(5);
-		} //end if
-		if(lrotate)
-		{
-		    p.rotate(-5);
-		    } //end if*/
+	    SDL_SetRenderDrawColor(renderer, 80, 150, 150, 255);
+	    SDL_RenderDrawLine(renderer, 0, 0, 300, 300);
 
-		if(forward)
-		{
-		    playerx = playerx + 3*dx;
-		    playery = playery + 3*dy;
-		} //end if
-		if(backward)
-		{
-		    playerx = playerx - 2*dx;
-		    playery = playery - 2*dy;
-		} //end if
-		if(sleft)
-		{
-		    playerx--;
-		} //end if
-		if(sright)
-		{
-		    playerx++;
-		} //end if
-		if(rrotate)
-		{
-		    rotate(true);
-		} //end if
-		if(lrotate)
-		{
-		    rotate(false);
-		} //end if
+	    SDL_RenderCopy(renderer, playerTexture, &srcPlayerRect, &dstPlayerRect);
 
-		//twx1 = (wallx1 - playerx * dx);
-		//twy1 = (wally1 - playery * dy);
-		//twx2 = (wallx2 - playerx * dx);
-	       	//twy2 = (wally2 - playery * dy);
+	    SDL_SetRenderDrawColor(renderer, 150, 200, 200, 255);
+	    SDL_RenderDrawLine(renderer, 250, 400, 70, 80);
 
-		twx1 = wallx1 - playerx; 
-		twy1 = wally1 - playery;
-		twx2 = wallx2 - playerx; 
-		twy2 = wally2 - playery;
+	    
 
-		//can probably replace the cos/sin functions with dx and dy as updated in rotate()
-		twz1 = twx1 * cos(M_PI/180 * playerDir) + twy1 * sin(M_PI/180 * playerDir);
-		twz2 = twx2 * cos(M_PI/180 * playerDir) + twy2 * sin(M_PI/180 * playerDir);
-	        twx1 = twx1 * sin(M_PI/180 * playerDir) - twy1 * cos(M_PI/180 * playerDir);
-	        twx2 = twx2 * sin(M_PI/180 * playerDir) - twy2 * cos(M_PI/180 * playerDir);
+	    //This updates the screen with what has been drawn on the renderer
+	    SDL_RenderPresent(renderer);
+	    
+	    //hud.disp();
+	    //We have a blanket delay since the game is not intensive on any semi-modern system
+	    //One day we'll intelligently set the framerate
+	    SDL_Delay(40);
 
-		//sin(M_PI/180 * playerDir)
-		//cos(M_PI/180 * playerDir)
-
-		//cout << playerDir << endl;
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-		SDL_RenderDrawLine(renderer, (resX/2) - twx1, (resY/2) - twz1, (resX/2) - twx2, (resY/2) - twz2);
-		SDL_SetRenderDrawColor(renderer, 255, 0, 255, 255);
-		SDL_RenderDrawLine(renderer, resX/2, resY/2, resX/2, resY/2 - 10);
-		//SDL_RenderDrawLine(renderer, playerx, playery, playerx + 1, playery + 1);
-		
-		//SDL_SetRenderDrawColor(renderer, 0, 255, 255, 255);
-		//SDL_RenderDrawLine(renderer, wallx1, wally1, wallx2, wally2);
-		//SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-		//SDL_RenderDrawLine(renderer, resX/2, resY/2, resX/2, resY/2 - 10);
-		//SDL_RenderDrawLine(renderer, playerx, playery, playerx + 1, playery + 1);
-		
-		//This updates the screen with what has been drawn on the renderer
-		SDL_RenderPresent(renderer);
-
-		hud.disp();
-		
-		//We have a blanket delay since the game is not intensive on any semi-modern system
-		//One day we'll intelligently set the framerate
-	       	SDL_Delay(40);
-
-		// end updates
-	    } //end while 
-        } //end else    
+	    // end updates
+	} //end while 
+    } //end else    
     return (0);
 }
  //end run

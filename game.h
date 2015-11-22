@@ -17,29 +17,15 @@ class Game
         SDL_Window* window;
 	SDL_Surface* surface;
         SDL_Renderer* renderer;
-        double playerx;
-	double playery;
-	int playerDir;
-	double dx;
-	double dy;
-	double wallx1;
-	double wally1;
-	double wallx2;
-	double wally2;
-	double twx1;
-	double twx2;
-	double twy1;
-	double twy2;
-	double twz1;
-	double twz2;
+	SDL_Texture* playerTexture;
 
     public:
         Game();
         ~Game();
         bool init();
+	bool loadTextures();
         int run();
         void close();
-        void rotate(bool);
 }; //end Game
 
 #endif //GAME_EXISTS

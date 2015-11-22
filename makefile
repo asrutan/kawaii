@@ -1,11 +1,15 @@
-kawaii: game.o main.o hud.o
-	g++ game.o main.o hud.o -w -lSDL2 -o kawaii
+kawaii: game.o main.o hud.o movement.o player.o
+	g++ game.o main.o hud.o movement.o player.o -w -lSDL2 -o kawaii
 main.o: main.cpp game.h
-	g++ -c main.cp
-game.o: game.cpp game.h hud.h
+	g++ -c main.cpp
+game.o: game.cpp game.h hud.h movement.h player.h
 	g++ -c game.cpp
 hud.o: hud.cpp hud.h
 	g++ -c hud.cpp
+movement.o: movement.cpp movement.h
+	g++ -c movement.cpp
+player.o: player.cpp player.h
+	g++ -c player.cpp
 clean:
 	rm -f *.o
 	rm kawaii
