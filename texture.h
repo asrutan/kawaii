@@ -8,7 +8,6 @@
 class Texture
 {
     private:
-        int ground;
 
     public:
         Texture();

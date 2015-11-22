@@ -8,12 +8,18 @@
 class World
 {
     private:
-        int ground;
+        int ground1;
+	int ground2;
+	int ground3;
+	int wall1x;
+	int wall1y1;
+	int wall1y2;
 
     public:
         World();
         ~World();
-	int getGround();
+	int getGround(int);
+	int regionRange(int);
 }; //end World(lol)
 
 #endif //WORLD_EXISTS

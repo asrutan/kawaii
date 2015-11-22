@@ -8,14 +8,34 @@ using namespace std;
 
 World::World()
 {
-    ground = 500;
+    ground1 = 500;
+    ground2 = 200;
+    ground3 = 800;
+    wall1x = 300;
+    wall1y1 = 200;
+    wall1y2 = 500;
+
+
+    //sectors[a1, a2, a3, a4, a5, a6, a7, a8]
 } //end constructor
 
 World::~World()
 {
 } //end destructor
 
-int World::getGround()
+int World::getGround(int playerX)
 {
-    return(ground);
+    return(regionRange(playerX));
 } //end getGround
+
+int World::regionRange(int playerX)
+{
+    if(playerX < 300)
+    {
+	return(ground1);
+    } //end if
+    else if(playerX > 300)
+    {
+	return(ground2);
+    } //end else if
+} //end regionRange

@@ -160,15 +160,18 @@ int Game::run()
 		keepGoing = false;
 	    } //end if
   
-	    dstPlayerRect.x = player.x;
-	    dstPlayerRect.y = player.y;
+	    dstPlayerRect.x = resX/2-50/2;
+	    dstPlayerRect.y = resY/2-106/2;
 
 	    SDL_UpdateWindowSurface(window);	
 	    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
 	    SDL_RenderClear(renderer);		 
 
             SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
-            SDL_RenderDrawLine(renderer, 0, 500, resX, 500);
+//SDL_RenderDrawLine(renderer, 0, 500, 300, 500);
+//SDL_RenderDrawLine(renderer, 300, 200, resX, 200);
+            SDL_RenderDrawLine(renderer, 0-player.x+resX/2-50/2, 500-player.y+resY/2-106/2, 300-player.x+resX/2-50/2, 500-player.y+resY/2-106/2);
+            SDL_RenderDrawLine(renderer, 300-player.x+resX/2-50/2, 200-player.y+resY/2-106/2, resX-player.x+resX/2-50/2, 200-player.y+resY/2-106/2);
 
 	    SDL_RenderCopy(renderer, playerTexture, &srcPlayerRect, &dstPlayerRect);
 

@@ -15,8 +15,11 @@ Player::Player()
     movement;
     airbound = false;
     //jumpReady = true;
+    jumpStrength = 15;
     x = 0;
-    y = 0;
+    xNew = 0;
+    y = 20;
+    yVelocity = 0;
     height = 106;
     speed = 5;
     quit = false;
@@ -35,6 +38,9 @@ void Player::update()
 	fall();
     } //end if
     
+    // cout << x << endl;
+    // cout << y << endl;
+
     /*else{
 	jumpReady = true;
     } //end if*/
@@ -45,23 +51,38 @@ void Player::move()
 {
     if(movement.right)
     {
-        x = x+speed;
-        //cout << x << endl;
+        xNew = x+speed;
+	//if(checkCollide(xNew, y))
+	//{
+	//    xNew = x;
+	//} //end if
+	x = xNew;
     } //end if
     if(movement.left)
     {
-        x = x-speed;
+        xNew = x-speed;
+	//if(checkCollide(xNew, y))
+	//{
+	//    xNew = x;
+	//} //end if
+	x = xNew;
+
         //cout << x << endl;
     } //end if
     if(movement.jump && !airbound)
     {
 	airbound = true;
-        yVelocity = 20;
+        yVelocity = jumpStrength;
         //cout << y << endl;
     } //end if
     if(movement.quit)
     {
         quit = true;
+    } //end if
+
+    if(y != world.getGround(x))
+    {
+	airbound = true;
     } //end if
 } //end move
 
@@ -69,10 +90,12 @@ void Player::fall()
 {
     y = y - yVelocity;
     yVelocity--;
-    checkBottom(world.getGround());
+    checkBottom(world.getGround(x));
+    //checkBottom(500);
 } //end fall
 
 void Player::checkBottom(int bottom)
+//void Player::checkBottom()
 {
     if(bottom <= y+height)
     {
@@ -80,3 +103,16 @@ void Player::checkBottom(int bottom)
 	airbound = false;
     } //end if
 } //end checkBottom
+
+/*
+bool Player::checkCollide(int checkX, int checkY)
+{
+    if(world.checkWall(checkX, checkY))
+    {
+	return(true);
+    } //end if
+    else{
+	return(false);
+    } //end else
+} //end checkCollide
+*/
