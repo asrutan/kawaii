@@ -3,6 +3,8 @@
 // 4/1/15
 #include <iostream>
 #include <SDL2/SDL.h>
+#include "SDL2/SDL_image.h"
+#include "SDL2/SDL_ttf.h"
 #include <cmath>
 #include "game.h"
 #include "hud.h"
@@ -136,8 +138,8 @@ int Game::run()
     srcPlayerRect.h = 854;
     dstPlayerRect.x = player.x;
     dstPlayerRect.y = player.y;
-    dstPlayerRect.w = 100;
-    dstPlayerRect.h = 213;
+    dstPlayerRect.w = 50;
+    dstPlayerRect.h = 106;
 
     if (!init())
     {
@@ -157,23 +159,18 @@ int Game::run()
 	    {
 		keepGoing = false;
 	    } //end if
-	      
-	    SDL_UpdateWindowSurface(window);	
-	    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
-	    SDL_RenderClear(renderer);		  
-	    
+  
 	    dstPlayerRect.x = player.x;
 	    dstPlayerRect.y = player.y;
 
-	    SDL_SetRenderDrawColor(renderer, 80, 150, 150, 255);
-	    SDL_RenderDrawLine(renderer, 0, 0, 300, 300);
+	    SDL_UpdateWindowSurface(window);	
+	    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
+	    SDL_RenderClear(renderer);		 
 
-	    SDL_SetRenderTarget(renderer, playerTexture);
+            SDL_SetRenderDrawColor(renderer, 200, 200, 200, 255);
+            SDL_RenderDrawLine(renderer, 0, 500, resX, 500);
+
 	    SDL_RenderCopy(renderer, playerTexture, &srcPlayerRect, &dstPlayerRect);
-	    SDL_RenderDrawRect(renderer, &dstPlayerRect);
-
-	    SDL_SetRenderDrawColor(renderer, 150, 200, 200, 255);
-	    SDL_RenderDrawLine(renderer, 250, 400, 70, 80);
 
 	    
 
