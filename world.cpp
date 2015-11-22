@@ -2,6 +2,8 @@
 // Alex Rutan
 // 11/22/15
 #include <iostream>
+#include <fstream>
+#include <string>
 #include "world.h"
 
 using namespace std;
@@ -14,14 +16,37 @@ World::World()
     wall1x = 300;
     wall1y1 = 200;
     wall1y2 = 500;
-
-
+    loadMap();
     //sectors[a1, a2, a3, a4, a5, a6, a7, a8]
 } //end constructor
 
 World::~World()
 {
 } //end destructor
+
+void World::loadMap()
+//read the file and count the lines to determine how
+//large the array should be when created on the heap
+{
+    /*
+    int i = -1;
+    ifstream file;
+    file.open("map.map");
+    string item;
+    while (!file.eof())
+    {
+	getline(file, item);
+	if (item != "")
+	{		
+	    i++;
+	} //end if
+	else{
+            cout << i << endl;
+	} //end else
+    } //end while
+    file.close();
+    */
+} //end loadMap
 
 int World::getGround(int playerX)
 {

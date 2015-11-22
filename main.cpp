@@ -14,7 +14,7 @@ int main()
 {
     Game game;
     game.run();
-    game.close();
+    //game.close();
     
     return 0;
 } //end main

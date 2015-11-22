@@ -21,7 +21,7 @@ Player::Player()
     y = 20;
     yVelocity = 0;
     height = 106;
-    speed = 5;
+    speed = 10;
     quit = false;
 } //end constructor
 
