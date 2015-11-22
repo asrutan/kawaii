@@ -72,7 +72,6 @@ bool Game::init()
 
 bool Game::loadTextures()
 {
-    cout << "hello" << endl;
     bool success = true;
     surface = SDL_LoadBMP("player.bmp");
     if(surface == NULL)
@@ -135,14 +134,18 @@ int Game::run()
     srcPlayerRect.y = 0;
     srcPlayerRect.w = 400;
     srcPlayerRect.h = 854;
-    dstPlayerRect.x = 0;
-    dstPlayerRect.y = 0;
+    dstPlayerRect.x = player.x;
+    dstPlayerRect.y = player.y;
     dstPlayerRect.w = 100;
     dstPlayerRect.h = 213;
 
     if (!init())
     {
 	printf("Coudn't initialize");
+    } //end if
+    else if (!loadTextures())
+    {
+        printf("shit's fucked.");
     } //end if
     else
     {
@@ -159,13 +162,15 @@ int Game::run()
 	    SDL_SetRenderDrawColor(renderer, 80, 80, 80, 255);
 	    SDL_RenderClear(renderer);		  
 	    
-	    //dstPlayerRect.x = player.x;
-	    //dstPlayerRect.y = player.y;
+	    dstPlayerRect.x = player.x;
+	    dstPlayerRect.y = player.y;
 
 	    SDL_SetRenderDrawColor(renderer, 80, 150, 150, 255);
 	    SDL_RenderDrawLine(renderer, 0, 0, 300, 300);
 
+	    SDL_SetRenderTarget(renderer, playerTexture);
 	    SDL_RenderCopy(renderer, playerTexture, &srcPlayerRect, &dstPlayerRect);
+	    SDL_RenderDrawRect(renderer, &dstPlayerRect);
 
 	    SDL_SetRenderDrawColor(renderer, 150, 200, 200, 255);
 	    SDL_RenderDrawLine(renderer, 250, 400, 70, 80);

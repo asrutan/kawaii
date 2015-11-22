@@ -13,8 +13,6 @@ using namespace std;
 int main()
 {
     Game game;
-    game.init();
-    game.loadTextures();
     game.run();
     game.close();
     
