@@ -27,7 +27,6 @@ class Player
         void update();
 	void fall();
 	void checkBottom(int);
-	//bool checkCollide(int, int);
 	bool quit;
         int x; // CHANGE THESE VALUES BACK TO PRIVATE
         int y; // THIS IS JUST TO TEST MOVING THE SPRITE IN Game!!!

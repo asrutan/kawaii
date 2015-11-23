@@ -15,10 +15,10 @@ Player::Player()
     movement;
     airbound = false;
     //jumpReady = true;
-    jumpStrength = 15;
+    jumpStrength = 20;
     x = 0;
     xNew = 0;
-    y = 20;
+    y = 0;
     yVelocity = 0;
     height = 106;
     speed = 10;
@@ -38,9 +38,6 @@ void Player::update()
 	fall();
     } //end if
     
-    // cout << x << endl;
-    // cout << y << endl;
-
     /*else{
 	jumpReady = true;
     } //end if*/
@@ -91,11 +88,9 @@ void Player::fall()
     y = y - yVelocity;
     yVelocity--;
     checkBottom(world.getGround(x));
-    //checkBottom(500);
 } //end fall
 
 void Player::checkBottom(int bottom)
-//void Player::checkBottom()
 {
     if(bottom <= y+height)
     {
@@ -103,16 +98,3 @@ void Player::checkBottom(int bottom)
 	airbound = false;
     } //end if
 } //end checkBottom
-
-/*
-bool Player::checkCollide(int checkX, int checkY)
-{
-    if(world.checkWall(checkX, checkY))
-    {
-	return(true);
-    } //end if
-    else{
-	return(false);
-    } //end else
-} //end checkCollide
-*/

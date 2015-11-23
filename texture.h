@@ -12,7 +12,6 @@
 class Texture
 {
     private:
-        int ground;
 	Display* display;
 	SDL_Surface* surface;
 	SDL_Texture* texture;

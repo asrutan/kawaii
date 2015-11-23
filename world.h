@@ -20,7 +20,6 @@ class World
         ~World();
 	int getGround(int);
 	int regionRange(int);
-	void loadMap();
 }; //end World(lol)
 
 #endif //WORLD_EXISTS

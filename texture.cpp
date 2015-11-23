@@ -15,7 +15,6 @@ using namespace std;
 Texture::Texture()
 {
     //Not used
-    ground = 500;
     surface = NULL;
     texture = NULL;
 }
@@ -24,7 +23,6 @@ Texture::Texture(Display* d)
 {
     display = d;
 
-    ground = 500;
     surface = NULL;
     texture = NULL;
 } //end constructor
@@ -36,21 +34,25 @@ Texture::~Texture()
 bool Texture::makeTexture(string path)
 {
     bool success = true;
-    surface = SDL_LoadBMP(path.c_str());
+    surface = IMG_Load(path.c_str());
     if(surface == NULL)
     {
         cout << "Couldn't load " << path << endl;
-	cout << SDL_GetError() << endl;
+	cout << IMG_GetError() << endl;
 	success = false;
     } //end if
     else
     {
+        //surface = IMG_LoadPNG(path.c_str());
         texture = SDL_CreateTextureFromSurface(display->getRenderer(), surface);
 	if(texture == NULL)
 	{
+	    cout << "Failed to create Texture" << endl;
+  	    cout << SDL_GetError() << endl;
 	    success = false;
 	} //end if
     } //end else
+    //cout << success << endl;
     return success;
 } //end loadTextures
 

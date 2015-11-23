@@ -2,6 +2,7 @@
 // Alex Rutan
 // 4/1/15
 #include <iostream>
+#include <sstream>
 #include <SDL2/SDL.h>
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
@@ -14,6 +15,7 @@
 #include "display.h"
 #include "texture.h"
 #include "textTexture.h"
+#include "tile.h"
 
 using namespace std;
 
@@ -24,245 +26,45 @@ initializes values used by SDL for renderer, window, and textures
  */
 Game::Game()
 {
-  /*resX = 800;
-    resY = 600;
-    window = NULL;
-    surface = NULL;
-    renderer = NULL;
-    playerTexture = NULL;
-
-    textTexture = NULL;
-    textFont = NULL;
-    textWidth = 0;
-    textHeight = 0;*/
-    //display.init();
     player = Texture(&display);
     font = textTexture(&display);
+    tiles = new Tile[12];
+    for(int i = 0; i < 12; i++)
+    {
+        //cout << i << endl;
+        tiles[i] = Tile(&display);
+    }
 } //end constructor
 
 Game::~Game()
 {
 } //end destructor
 
-
-/*NOW IN Display.cpp
-Initializes SDL and creates window, renderer, and assigns values for their initialization
-Has checks to make sure everythin initializes properly
-Otherwise it would be very hard to pinpoint what is breaking when nothing happens
- */
-/*bool Game::init()
-{
-    bool success = true;
-    if(SDL_Init(SDL_INIT_VIDEO) < 0)
-    {
-	printf("SDL broke or something.");
-	success = false;
-    } //end if
-    else
-    {
-	window = SDL_CreateWindow("Kawaii", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, resX, resY, SDL_WINDOW_SHOWN);
-	if(window == NULL)
-	{
-	    printf("Window Can't Be Created Fool");
-	    success = false;
-	}
-	else
-	{
-	    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	    if(!renderer)
-	    {
-		cout << "Couldn't create window :( " << endl;
-		cout << SDL_GetError() << endl;
-		success = false;
-	    } //end if
-	    else
-	    {
-		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-		int imgFlags = IMG_INIT_PNG;
-	    	if(!(IMG_Init(imgFlags) & imgFlags))
-	       	{
-	       	    printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
-	            success = false;
-		}
-
-	        //Initialize SDL_ttf
-	     	if(TTF_Init() == -1)
-		{
-		    printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
-       	    	    success = false;
-		}
-	    } //end else
-	} //end else
-    } //end else
-    return success;
-} //end init*/
-
-
 bool Game::loadTextures()
 {
     bool success = true;
     if(!player.makeTexture("player.bmp"))
     {
+        cout << "Player texture failed" << endl;
 	success = false;
     }
     if(!font.loadFontMedia("/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"))
     {
+        cout << "Font texture failed" << endl;
 	success = false;
     }
-    /*NOW IN Texture.cpp
-    if(surface == NULL)
+    for(int i = 0; i < 12; i++)
     {
-	printf("Couldn't load textures sry :(");
-	cout << SDL_GetError() << endl;
-	success = false;
-    } //end if
-    else{
-        playerTexture = SDL_CreateTextureFromSurface(renderer, surface);
-	if(playerTexture == NULL)
-	{
+        if(!tiles[i].textureTile("blocks.png"))
+        {
+  	    cout << "tile texture failed" << endl;
 	    success = false;
-	} //end if
-    } //end else
-    */
+        }
+    }
+    
     return success;
 } //end loadTextures
 
-
-/*NOW IN Display.cpp
-Destroy each of the textures, surface, window, and renderer
-Otherwise things hang around in memory
-Execute "SDL_Quit()" to properly close SDL
- */
-/*NOW IN Display.cpp
-void Game::close()
-{
-    SDL_DestroyRenderer(renderer);
-    renderer = NULL;
-
-    SDL_FreeSurface(surface);
-    surface = NULL;
-
-    SDL_DestroyWindow(window);
-    window = NULL;
-
-    SDL_DestroyTexture(playerTexture);
-    playerTexture = NULL;
-
-    //IMG_Quit(); this library is not currently installed
-    SDL_Quit();
-    TTF_Quit();
-    IMG_Quit();
-} //end close
-*/
-
-/*NOW IN textTexture.cpp
-bool Game::loadFontMedia()
-{
-    //Loading success flag
-    bool success = true;
-    //cout << "About to load font" << endl;
-    //Open the font
-    textFont = TTF_OpenFont("/usr/share/fonts/truetype/fonts-japanese-gothic.ttf", 28);
-    if(textFont == NULL)
-    {
-        cout << "Failed to load font! SDL_ttf Error: " << '\n' <<  TTF_GetError() << endl;
-       	success = false;
-    }
-    else
-    {
-        //cout << "Font Loaded" << endl;
-       	//Render text
-       	SDL_Color textColor = { 225, 225, 225 };
-       	if(!loadFontFromRenderedText("Madoka 4 lyfe!!", textColor))
-	{
-  	    cout << "Failed to render text texture!\n" << endl;
-       	    success = false;
-       	}
-    }
-
-    return success;
-}
-*/
-
-/*NOW IN textTexture.cpp
-bool Game::loadFontFromRenderedText(string textAsTexture, SDL_Color textColor)
-{
-    //Get rid of existing texture
-    releaseTextTexture();
-
-    //Render text surface
-    SDL_Surface* textSurface = TTF_RenderText_Solid(textFont, textAsTexture.c_str(), textColor);
-    if(textSurface == NULL)
-    {
-        //cout << "Surface not Made" << endl;
-        cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << endl;
-    }
-    else
-    {
-        //cout << "Surface made" << endl;
-        //Create texture from surface pixels
-	textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-        if(textTexture == NULL)
-        {
-            cout << "Unable to create texture from rendered text! SDL Error: " << SDL_GetError() << endl;
-        }
-        else
-        {
-	    //cout << "Texture made" << endl;
-   	    //Get image dimensions
-       	    textWidth = textSurface->w;
-	    textHeight = textSurface->h;
-	    //cout << textWidth << endl;
-	    //cout << textHeight << endl;
-	}
-
-       	//Get rid of old surface
-       	SDL_FreeSurface(textSurface);
-	}
-	
-    //Return success
-    return textTexture != NULL;
-}
-
-void Game::releaseTextTexture()
-{
-    //Free texture if it exists
-    if(textTexture != NULL)
-    {
-        SDL_DestroyTexture(textTexture);
-       	textTexture = NULL;
-       	textWidth = 0;
-       	textHeight = 0;
-    }
-}
-
-void Game::renderTextTexture(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
-{
-    //Set rendering space and render to screen
-    SDL_Rect renderQuad = {x, y, textWidth, textHeight};
-
-    //Set clip rendering dimensions
-    if(clip != NULL)
-    {
-      	renderQuad.w = clip->w;
-       	renderQuad.h = clip->h;
-    }
-
-    //Render to screen
-    SDL_RenderCopyEx(renderer, textTexture, clip, &renderQuad, angle, center, flip);
-    //SDL_RenderCopy(renderer, textTexture, NULL, NULL);
-}
-
-int Game::getFontFileWidth()
-{
-    return textWidth;
-}
-int Game::getFontFileHeight()
-{
-    return textHeight;
-}
-*/
 
 /*
 First, take each of the textures and assign them to their own specific rectangles to be drawn later
@@ -287,6 +89,23 @@ int Game::run()
     dstPlayerRect.y = player.y;
     dstPlayerRect.w = 50;
     dstPlayerRect.h = 106;
+
+    SDL_Rect srcTileRects[12];
+    SDL_Rect dstTileRects[12];
+    int tileSize = 50;
+
+    for(int j = 0; j < 12; j++)
+    {
+	srcTileRects[j].x = 0;
+	srcTileRects[j].y = 0;
+	srcTileRects[j].w = tileSize;
+	srcTileRects[j].h = tileSize;
+
+	dstTileRects[j].x = 0;
+	dstTileRects[j].y = tileSize*j;
+	dstTileRects[j].w = tileSize;
+	dstTileRects[j].h = tileSize;
+    }
 
     if (!display.init())
     {
@@ -322,12 +141,22 @@ int Game::run()
 
 	    SDL_RenderCopy(display.getRenderer(), this->player.getTexture(), &srcPlayerRect, &dstPlayerRect);
 
-	    //cout << resX-(getFontFileWidth()/2) << endl;
-	    //cout << resY-(getFontFileHeight()/2) << endl;
 
             SDL_SetRenderDrawColor(display.getRenderer(), 255,255,255,255);
             //SDL_RenderCopy(renderer, textTexture, NULL, NULL);
+
+	    stringstream strs;
+	    strs << player.x / 20 << " Meters";
+	    string str = strs.str();
+
+	    font.loadFontFromRenderedText(str, {50, 50, 225});
+
 	    font.renderTextTexture((display.getResX() - font.getFontFileWidth()) / 2, 550);
+
+	    for(int k = 0; k < 12; k++)
+	    {
+	      SDL_RenderCopy(display.getRenderer(), tiles[k].getTexture(), &srcTileRects[k], &dstTileRects[k]);
+	    }
 
 	    //This updates the screen with what has been drawn on the renderer
 	    SDL_RenderPresent(display.getRenderer());
