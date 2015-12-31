@@ -5,17 +5,26 @@
 #ifndef CAMFOCUS_EXIST
 #define CAMFOCUS_EXIST
 
+#include "player.h"
+#include "world.h"
+
 class camFocus
 {
     private:
-        int xTarget = 0;
-	int yTarget = 0;
-	int xVelocity = 0;
-	int yVelocity = 0;
+        Player* player;
+        World* world;
+        int xTarget;
+	int yTarget;
+	int xVelocity;
+	int yVelocity;
+	bool campan;
 
     public:
         camFocus();
+	camFocus(Player*, World*);
 	~camFocus();
+	void update();
+	void move();
         int x;
 	int y;
 	//bool init();

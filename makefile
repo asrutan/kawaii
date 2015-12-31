@@ -20,7 +20,7 @@ textTexture.o: textTexture.cpp textTexture.h display.h
 	g++ -c textTexture.cpp
 tile.o: tile.cpp tile.h display.h texture.h collideBox.h
 	g++ -c tile.cpp
-camFocus.o: camFocus.cpp camFocus.h
+camFocus.o: camFocus.cpp camFocus.h player.h world.h
 	g++ -c camFocus.cpp
 collision.o: collision.cpp collision.h world.h player.h collideBox.h
 	g++ -c collision.cpp

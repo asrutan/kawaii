@@ -81,7 +81,7 @@ int Game::run()
 {   
     Collision collision = Collision(&player, &world);
     Hud hud;
-    camFocus cam;
+    camFocus cam = camFocus(&player, &world);
     //hud.init(&playerx);
 
     player.x = 100;
@@ -177,50 +177,17 @@ int Game::run()
 		keepGoing = false;
 	    } //end if
 	    
-	    //cout << player.y << endl;
-	    
-	    cam.x = player.x-400;
-	    cam.y = player.y-300;
-
-	    //cam.x = cam.x - 400;
-	    //cam.y = cam.y - 300;
-	    
-	    if(cam.x == -50)
-	      {
-	        campan = false;
-	      }
-	    if(cam.x == 50)
-	      {
-	        campan = true;
-		} //end else */
-	    
-	    if(campan)
-	      {
-		cam.x--;
-		cam.y--;
-	      }
-	    if(campan)
-	      {
-		cam.x++;
-		cam.y++;
-	      }
+	    cam.update();
 
 	    for(int i = 0; i < world.getTileCount(); i++)
 	    {
-	        //MOVE TO GLOBAL UPDATE CLASS?
+	        //MOVE TO GLOBAL RENDER CLASS?
 	        //Change destination to draw to based on player movement:
 	        dstTileRects[i].x = world.getIthTile(i)->getXPos() - cam.x;
 		//cout << world.getIthTile(i)->getXPos() << endl;
 	        dstTileRects[i].y = world.getIthTile(i)->getYPos() - cam.y;
 	        //cout << tiles[i].getXPos() << endl;
 	    }
-	    
-	    //center camera
-	    //cam.x = cam.x - 400;
-	    //cam.y = cam.y - 300;
-	    
-	    //cout << player.x << endl;
-	    //cout << player.y << endl;
 
 	    dstPlayerRect.x = player.x - cam.x;
 	    dstPlayerRect.y = player.y - cam.y;
@@ -232,16 +199,7 @@ int Game::run()
 	    SDL_SetRenderDrawColor(display.getRenderer(), 80, 80, 80, 255);
 	    SDL_RenderClear(display.getRenderer());		 
 
-            SDL_SetRenderDrawColor(display.getRenderer(), 200, 200, 200, 255);
-            //SDL_RenderDrawLine(display.getRenderer(), 0, 500, display.getResX(), 500);
-	    
-	    /*
-	    SDL_RenderDrawLine(display.getRenderer(), 0-cam.x, 500-cam.y, 300-cam.x, 500-cam.y);// draw line centered on player in x direction and below player in Y direction
-	    //x1 = 0(Origin) - player pos + center of screen - player size offset
-            SDL_RenderDrawLine(display.getRenderer(), 300-cam.x, 200-cam.y, display.getResX()-cam.x+display.getResX()/2-50/2, 200-cam.y+display.getResY()/2-106/2);
-	    */
-	    SDL_RenderCopy(display.getRenderer(), playerTexture.getTexture(), &srcPlayerRect, &dstPlayerRect);
-
+            SDL_SetRenderDrawColor(display.getRenderer(), 200, 200, 200, 255);	    
 
             SDL_SetRenderDrawColor(display.getRenderer(), 255,255,255,255);
             //SDL_RenderCopy(renderer, textTexture, NULL, NULL);
@@ -250,14 +208,15 @@ int Game::run()
 	    strs << "X: " << player.x << "  Y: " << player.y << "Pixels";
 	    string str = strs.str();
 
-	    font.loadFontFromRenderedText(str, {50, 50, 225});
-
-	    font.renderTextTexture((display.getResX() - font.getFontFileWidth()) / 2, 550);
-
 	    for(int k = 0; k < world.getTileCount(); k++)
 	    {
 	      SDL_RenderCopy(display.getRenderer(), world.getIthTile(k)->getTexture(), &srcTileRects[k], &dstTileRects[k]);
-	    }
+	    } //draw tiles
+
+	    SDL_RenderCopy(display.getRenderer(), playerTexture.getTexture(), &srcPlayerRect, &dstPlayerRect); //draw player
+
+	    font.loadFontFromRenderedText(str, {50, 50, 225}); //draw text?
+	    font.renderTextTexture((display.getResX() - font.getFontFileWidth()) / 2, 550); //draw text
 
 	    //This updates the screen with what has been drawn on the renderer
 	    SDL_RenderPresent(display.getRenderer());
