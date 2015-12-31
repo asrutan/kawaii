@@ -5,23 +5,27 @@
 #include <cmath>
 #include "player.h"
 #include "movement.h"
-#include "world.h"
+#include "collideBox.h"
 
 using namespace std;
 
 Player::Player()
 {
-    world;
     movement;
     airbound = false;
+    xCollided = false;
+    yCollided = false;
     //jumpReady = true;
     jumpStrength = 20;
     x = 0;
     xNew = 0;
     y = 0;
+    cBox = collideBox(x, x + 100, y, y + 125);
     yVelocity = 0;
-    height = 106;
-    speed = 10;
+    height = 125;
+    speed = 5;
+    tick = 0;
+    frame = 0;
     quit = false;
 } //end constructor
 
@@ -31,39 +35,37 @@ Player::~Player()
 
 void Player::update()
 {
+    xNew = x;
     movement.keyEvents();
-    move();
-    if(airbound)
+    tryMove();
+    tick++;
+    //cout << frame << endl;
+    if(tick > 5)
     {
-	fall();
+	tick = 0;
+	frame++;
+	if(frame > 7)
+	{
+	    frame = 0;
+	} //end if
     } //end if
-    
     /*else{
 	jumpReady = true;
     } //end if*/
     //cout << airbound << endl;
 } //end update
 
-void Player::move()
+void Player::tryMove()
 {
     if(movement.right)
     {
         xNew = x+speed;
-	//if(checkCollide(xNew, y))
-	//{
-	//    xNew = x;
-	//} //end if
-	x = xNew;
+	//x = xNew;
     } //end if
     if(movement.left)
     {
         xNew = x-speed;
-	//if(checkCollide(xNew, y))
-	//{
-	//    xNew = x;
-	//} //end if
-	x = xNew;
-
+	//x = xNew;
         //cout << x << endl;
     } //end if
     if(movement.jump && !airbound)
@@ -77,24 +79,78 @@ void Player::move()
         quit = true;
     } //end if
 
-    if(y != world.getGround(x))
+    if(!yCollided)
     {
 	airbound = true;
     } //end if
+    cBox.update(xNew, xNew + 100, y, y + 125);
 } //end move
 
 void Player::fall()
 {
-    y = y - yVelocity;
-    yVelocity--;
-    checkBottom(world.getGround(x));
+    if(y < 1200)//max y dist at 800
+    { 
+        y = y - yVelocity;
+        yVelocity--;
+	cBox.update(x, x + 100, y, y + 125);
+	checkBottom();
+    }
+    else
+    {
+	y = 799;
+	yVelocity = 0;
+	airbound = false;
+	yCollided = true;
+    }
 } //end fall
 
-void Player::checkBottom(int bottom)
+collideBox Player::getCollideBox()
 {
-    if(bottom <= y+height)
+    return cBox;
+}//end getCollideBox
+
+void Player::checkBottom()
+{
+    if(yCollided)
     {
-	y = bottom - height;
+        //y = bottom - height;
 	airbound = false;
+	yVelocity = 0;
     } //end if
 } //end checkBottom
+
+void Player::setXCollided(bool c)
+{
+    xCollided = c;
+}
+void Player::setYCollided(bool c)
+{
+    yCollided = c;
+}
+void Player::setGround(int g)
+{
+    ground = g;
+}
+void Player::setYVelocity(int v)
+{
+    yVelocity = v;
+}
+void Player::move()
+{
+    if(!xCollided)
+    {
+        x = xNew;
+    }
+    if(airbound)
+    {
+	fall();
+    } //end if
+
+    cBox.update(x, x + 100, y, y + 125);
+}
+
+int Player::getNewX()
+{
+    return xNew;
+}
+

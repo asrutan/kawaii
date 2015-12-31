@@ -43,8 +43,9 @@ bool Texture::makeTexture(string path)
     } //end if
     else
     {
+	SDL_SetColorKey(surface, SDL_TRUE, SDL_MapRGB(surface->format, 0, 0xFF, 0));
         //surface = IMG_LoadPNG(path.c_str());
-        texture = SDL_CreateTextureFromSurface(display->getRenderer(), surface);
+	texture = SDL_CreateTextureFromSurface(display->getRenderer(), surface);
 	if(texture == NULL)
 	{
 	    cout << "Failed to create Texture" << endl;

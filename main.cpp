@@ -12,7 +12,9 @@ using namespace std;
  */
 int main()
 {
-    Game game;
+    //cout << "Main started" << endl;
+    Game game = Game();
+    //cout << "Game Made" << endl;
     game.run();
     //game.close();
     

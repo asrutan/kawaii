@@ -5,21 +5,24 @@
 #ifndef WORLD_EXIST
 #define WORLD_EXIST
 
+#include <vector>
+#include <string>
+#include "tile.h"
+
 class World
 {
     private:
-        int ground1;
-	int ground2;
-	int ground3;
-	int wall1x;
-	int wall1y1;
-	int wall1y2;
+	std::vector<Tile> tiles;
+	int stringToInt(std::string);
 
     public:
         World();
+	World(Display*);
+	World(Display*, std::string);
         ~World();
-	int getGround(int);
-	int regionRange(int);
+	Tile* getIthTile(int);
+	int getTileCount();
+	void loadWorld(std::string, Display*);
 }; //end World(lol)
 
 #endif //WORLD_EXISTS

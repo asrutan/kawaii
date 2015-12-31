@@ -6,31 +6,43 @@
 #define PLAYER_EXIST
 
 #include "movement.h"
-#include "world.h"
+#include "collideBox.h"
 
 class Player
 {
     private:
         Movement movement;
-	World world;
+	collideBox cBox;
 	int speed;
 	bool airbound;
+	bool xCollided;
+	bool yCollided;
 	//bool jumpReady;
 	int yVelocity;
 	int jumpStrength;
 	int xNew;
+	int ground;
 
     public:
         Player();
         ~Player();
-        void move();
+        void tryMove();
+	void move();
         void update();
+	int getNewX();
 	void fall();
-	void checkBottom(int);
+	collideBox getCollideBox();
+	void checkBottom();
+	void setXCollided(bool);
+	void setYCollided(bool);
+	void setGround(int);
+	void setYVelocity(int);
 	bool quit;
         int x; // CHANGE THESE VALUES BACK TO PRIVATE
         int y; // THIS IS JUST TO TEST MOVING THE SPRITE IN Game!!!
 	int height; //
+	int frame; //animation frame TEST
+	int tick; //for animation frame TEST
 }; //end Player
 
 #endif //PLAYER_EXISTS

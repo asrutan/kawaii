@@ -8,19 +8,25 @@
 #include <SDL2/SDL.h>
 #include "SDL2/SDL_ttf.h"
 #include "SDL2/SDL_image.h"
-#include <string.h>
+#include <string>
 #include "display.h"
 #include "texture.h"
 #include "textTexture.h"
 #include "tile.h"
+#include "world.h"
+#include "player.h"
+#include "collision.h"
 
 class Game
 {
     private:
         Display display;
-	Texture player;
+	Texture playerTexture;
 	textTexture font;
-	Tile* tiles;
+	//Tile* tiles;
+	World world;
+	Player player;
+	//Collision collision;
 
     public:
         Game();
