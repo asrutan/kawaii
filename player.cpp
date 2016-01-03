@@ -22,10 +22,16 @@ Player::Player()
     y = 0;
     cBox = collideBox(x, x + 100, y, y + 125);
     yVelocity = 0;
+    xVelocity = 0;
     height = 125;
-    speed = 5;
+    speed = 10;
     tick = 0;
     frame = 0;
+    //make this an array or list or some shit
+    animForward = false;
+    animBackward = false;
+    animIdle = true;
+    //
     quit = false;
 } //end constructor
 
@@ -37,10 +43,12 @@ void Player::update()
 {
     xNew = x;
     movement.keyEvents();
+    xNew = x+xVelocity;
     tryMove();
     tick++;
     //cout << frame << endl;
-    if(tick > 5)
+
+    if(tick > 4)
     {
 	tick = 0;
 	frame++;
@@ -59,15 +67,46 @@ void Player::tryMove()
 {
     if(movement.right)
     {
-        xNew = x+speed;
+	animForward = true;
+	animIdle = false;
+	if(xVelocity+1 <= speed)
+	{ 
+	    xVelocity++;
+	} //end if
+        //xNew = x+xVelocity;
 	//x = xNew;
     } //end if
+    else if(!movement.right)
+    {
+	animForward = false;
+	animIdle = true;
+	if(xVelocity > 0)
+	{ 
+	    xVelocity--;
+	} //end if
+    } //end elif
+    
     if(movement.left)
     {
-        xNew = x-speed;
+	animBackward = true;
+	animIdle = false;
+	if(xVelocity-1 >= speed*-1)
+	{ 
+	    xVelocity--;
+	} //end if
+        //xNew = x+xVelocity;
 	//x = xNew;
         //cout << x << endl;
     } //end if
+    else if(!movement.left)
+    { 
+	animBackward = false;
+	if(xVelocity < 0)
+	{ 
+	    xVelocity++;
+	} //end if
+    } //end elif
+	    
     if(movement.jump && !airbound)
     {
 	airbound = true;
@@ -154,3 +193,8 @@ int Player::getNewX()
     return xNew;
 }
 
+
+
+
+//if x + 1 collides, x velocity = 0
+//consider the preceding for collision detection

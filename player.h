@@ -19,6 +19,7 @@ class Player
 	bool yCollided;
 	//bool jumpReady;
 	int yVelocity;
+	int xVelocity;
 	int jumpStrength;
 	int xNew;
 	int ground;
@@ -37,6 +38,9 @@ class Player
 	void setYCollided(bool);
 	void setGround(int);
 	void setYVelocity(int);
+	bool animForward;
+	bool animBackward;
+	bool animIdle;
 	bool quit;
         int x; // CHANGE THESE VALUES BACK TO PRIVATE
         int y; // THIS IS JUST TO TEST MOVING THE SPRITE IN Game!!!

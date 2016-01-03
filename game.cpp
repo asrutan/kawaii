@@ -7,15 +7,12 @@
 #include "SDL2/SDL_image.h"
 #include "SDL2/SDL_ttf.h"
 #include <string>
-#include <cmath>
 #include "game.h"
 #include "hud.h"
-#include "movement.h"
 #include "player.h"
 #include "display.h"
 #include "texture.h"
 #include "textTexture.h"
-#include "tile.h"
 #include "world.h"
 #include "camFocus.h"
 
@@ -85,7 +82,7 @@ int Game::run()
     //hud.init(&playerx);
 
     player.x = 100;
-    player.y = 1000;
+    player.y = 500;
     //player.x = display.getResX()/2-50/2;
     //player.y = display.getResY()/2-106/2;
 
@@ -94,6 +91,7 @@ int Game::run()
     SDL_Rect dstPlayerRect;
     srcPlayerRect.x = 0;
     srcPlayerRect.y = 0;
+    //srcPlayerRect.y = 137;
     srcPlayerRect.w = 100;
     srcPlayerRect.h = 136;
     dstPlayerRect.x = player.x;
@@ -115,7 +113,6 @@ int Game::run()
 
 	dstTileRects[j].x = world.getIthTile(j)->getXPos();
 	dstTileRects[j].y = world.getIthTile(j)->getYPos();
-	//cout << player.getWorld()->getIthTile(j).getYPos() << endl;
 	dstTileRects[j].w = tileSize;
 	dstTileRects[j].h = tileSize;
     }
@@ -137,38 +134,92 @@ int Game::run()
         while(keepGoing)
         {
     	    player.update();
-	    if(player.frame < 1)
+	    if(player.animForward)
+	    {
+		srcPlayerRect.y = 0;
+	    } //end if
+	    else if(player.animBackward)
+	    {
+		srcPlayerRect.y = 137;
+	    } //end elif
+	    else if(player.animIdle)
+	    {
+		srcPlayerRect.y = 273;
+	    } //end else
+
+	    if(!player.animIdle)
+	    {
+		if(player.frame < 1 && player.animForward)
+		{
+		    srcPlayerRect.x = 0;
+		} //end if
+		else if(player.frame == 1)
+		{
+		    srcPlayerRect.x = 100;
+		} //end if
+		else if(player.frame == 2)
+		{
+		    srcPlayerRect.x = 200;
+		} //end if
+		else if(player.frame == 3)
+		{
+		    srcPlayerRect.x = 300;
+		} //end if
+		else if(player.frame == 4)
+		{
+		    srcPlayerRect.x = 400;
+		} //end if
+		else if(player.frame == 5)
+		{
+		    srcPlayerRect.x = 500;
+		} //end if
+		else if(player.frame == 6)
+		{
+		    srcPlayerRect.x = 600;
+		} //end if
+		else if(player.frame == 7)
+		{
+		    srcPlayerRect.x = 700;
+		} //end if */
+		
+		if(player.frame < 1 && player.animBackward)
+		{
+		    srcPlayerRect.x = 700;
+		} //end if
+		else if(player.frame == 1)
+		{
+		    srcPlayerRect.x = 600;
+		} //end if
+		else if(player.frame == 2)
+		{
+		    srcPlayerRect.x = 500;
+		} //end if
+		else if(player.frame == 3)
+		{
+		    srcPlayerRect.x = 400;
+		} //end if
+		else if(player.frame == 4)
+		{
+		    srcPlayerRect.x = 300;
+		} //end if
+		else if(player.frame == 5)
+		{
+		    srcPlayerRect.x = 200;
+		} //end if
+		else if(player.frame == 6)
+		{
+		    srcPlayerRect.x = 100;
+		} //end if
+		else if(player.frame == 7)
+		{
+		    srcPlayerRect.x = 0;
+		} //end if
+	    } //end if
+	    else
 	    {
 		srcPlayerRect.x = 0;
-	    } //end if
-	    if(player.frame == 1)
-	    {
-		srcPlayerRect.x = 100;
-	    } //end if
-	    if(player.frame == 2)
-	    {
-		srcPlayerRect.x = 200;
-	    } //end if
-	    if(player.frame == 3)
-	    {
-		srcPlayerRect.x = 300;
-	    } //end if
-	    if(player.frame == 4)
-	    {
-		srcPlayerRect.x = 400;
-	    } //end if
-	    if(player.frame == 5)
-	    {
-		srcPlayerRect.x = 500;
-	    } //end if
-	    if(player.frame == 6)
-	    {
-		srcPlayerRect.x = 600;
-	    } //end if
-	    if(player.frame == 7)
-	    {
-		srcPlayerRect.x = 700;
-	    } //end if
+	    } //end else
+
 	    collision.playerWallCollision(player.getCollideBox());
 	    collision.checkFloorCollision(player.getCollideBox());
 	    player.move();
@@ -177,7 +228,7 @@ int Game::run()
 		keepGoing = false;
 	    } //end if
 	    
-	    cam.update();
+	    cam.update(); //update camera
 
 	    for(int i = 0; i < world.getTileCount(); i++)
 	    {
@@ -191,9 +242,6 @@ int Game::run()
 
 	    dstPlayerRect.x = player.x - cam.x;
 	    dstPlayerRect.y = player.y - cam.y;
-
-	    //player.x = world.getIthTile(8)->getXPos() + 10;
-	    //player.y = world.getIthTile(8)->getYPos() + 10;
 
 	    SDL_UpdateWindowSurface(display.getWindow());	
 	    SDL_SetRenderDrawColor(display.getRenderer(), 80, 80, 80, 255);
