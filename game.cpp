@@ -280,13 +280,11 @@ int Game::run()
 	    collision.playerWallCollision(player.getCollideBox()); //for player
 	    collision.checkFloorCollision(player.getCollideBox()); //for player
 
-enemy.x = 200;
-    enemy.y = 2300;
+	    enemy.x = 200; //because collision is broken in enemy
+	    enemy.y = 2300; //because collision is broken in enmy 
 	    
 	    //collision.playerWallCollision(enemy.getCollideBox()); //for enemy
 	    //collision.checkFloorCollision(enemy.getCollideBox()); //for enemy
-	    
-	    cout << enemy.y << endl;
 	    
 	    //player.move();
 	    if(player.quit)
