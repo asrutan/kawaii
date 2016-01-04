@@ -20,7 +20,7 @@ Player::Player()
     x = 0;
     xNew = 0;
     y = 0;
-    cBox = collideBox(x, x + 100, y, y + 125);
+    cBox = collideBox(x+50, x+60, y, y + 125);
     yVelocity = 0;
     xVelocity = 0;
     height = 125;
@@ -45,6 +45,7 @@ void Player::update()
     movement.keyEvents();
     xNew = x+xVelocity;
     tryMove();
+    move();
     tick++;
     //cout << frame << endl;
 
@@ -122,16 +123,16 @@ void Player::tryMove()
     {
 	airbound = true;
     } //end if
-    cBox.update(xNew, xNew + 100, y, y + 125);
+    cBox.update(xNew+50, xNew+60, y, y + 125);
 } //end move
 
 void Player::fall()
 {
-    if(y < 1200)//max y dist at 800
+    if(y < 10000)//max y dist at 800
     { 
         y = y - yVelocity;
         yVelocity--;
-	cBox.update(x, x + 100, y, y + 125);
+	cBox.update(x+50, x+60, y, y + 125);
 	checkBottom();
     }
     else
@@ -185,7 +186,7 @@ void Player::move()
 	fall();
     } //end if
 
-    cBox.update(x, x + 100, y, y + 125);
+    cBox.update(x+50, x+60, y, y + 125);
 }
 
 int Player::getNewX()
@@ -193,8 +194,11 @@ int Player::getNewX()
     return xNew;
 }
 
-
+/*void Player::attack()
+{
+    
+} //end attack
 
 
 //if x + 1 collides, x velocity = 0
-//consider the preceding for collision detection
+//consider the preceding for collision detection */

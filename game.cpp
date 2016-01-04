@@ -10,6 +10,7 @@
 #include "game.h"
 #include "hud.h"
 #include "player.h"
+#include "enemy.h"
 #include "display.h"
 #include "texture.h"
 #include "textTexture.h"
@@ -27,9 +28,11 @@ Game::Game()
 {
     //cout << "game Started" << endl;
     playerTexture = Texture(&display);
+    enemyTexture = Texture(&display);
     font = textTexture(&display);
     world = World(&display, "map.kwi");
     player = Player();
+    enemy = Enemy();
     //cout << "Game constructed" << endl;
 
 } //end constructor
@@ -47,7 +50,12 @@ bool Game::loadTextures()
 	success = false;
     }
 
-    
+    if(!enemyTexture.makeTexture("enemy.gif"))
+    {
+	cout << "Enemy texture failed, son" << endl;
+	success = false;
+    } //end if
+    else
     
     if(!font.loadFontMedia("/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"))
     {
@@ -76,15 +84,16 @@ Create an instance of SDL_Event for player input, events change bools to "true"
  */
 int Game::run()
 {   
-    Collision collision = Collision(&player, &world);
+    Collision collision = Collision(&player, &enemy, &world);
     Hud hud;
-    camFocus cam = camFocus(&player, &world);
+    camFocus cam = camFocus(&player, &enemy, &world);
     //hud.init(&playerx);
 
     player.x = 100;
-    player.y = 500;
-    //player.x = display.getResX()/2-50/2;
-    //player.y = display.getResY()/2-106/2;
+    player.y = 2300;
+
+    enemy.x = 200;
+    enemy.y = 2300;
 
     //find a way to get this shit in player or something
     SDL_Rect srcPlayerRect;
@@ -98,6 +107,19 @@ int Game::run()
     dstPlayerRect.y = player.y;
     dstPlayerRect.w = 100;
     dstPlayerRect.h = 136;
+
+    SDL_Rect srcEnemyRect;
+    SDL_Rect dstEnemyRect;
+    srcEnemyRect.x = 0;
+    srcEnemyRect.y = 0;
+    //srcEnemyRect.y = 137;
+    srcEnemyRect.w = 100;
+    srcEnemyRect.h = 136;
+    dstEnemyRect.x = enemy.x;
+    dstEnemyRect.y = enemy.y;
+    dstEnemyRect.w = 100;
+    dstEnemyRect.h = 136;
+
 
     SDL_Rect srcTileRects[world.getTileCount()];
     SDL_Rect dstTileRects[world.getTileCount()];
@@ -133,7 +155,7 @@ int Game::run()
         bool keepGoing = true;
         while(keepGoing)
         {
-    	    player.update();
+	    player.update(); //update player
 	    if(player.animForward)
 	    {
 		srcPlayerRect.y = 0;
@@ -220,9 +242,53 @@ int Game::run()
 		srcPlayerRect.x = 0;
 	    } //end else
 
-	    collision.playerWallCollision(player.getCollideBox());
-	    collision.checkFloorCollision(player.getCollideBox());
-	    player.move();
+	    enemy.update(); //update enemy
+
+	    if(enemy.frame < 1)
+	    {
+		srcEnemyRect.x = 0;
+	    } //end if
+	    else if(enemy.frame == 1)
+	    {
+		srcEnemyRect.x = 100;
+	    } //end if
+	    else if(enemy.frame == 2)
+	    {
+		srcEnemyRect.x = 200;
+	    } //end if
+	    else if(enemy.frame == 3)
+	    {
+		srcEnemyRect.x = 300;
+	    } //end if
+	    else if(enemy.frame == 4)
+	    {
+		srcEnemyRect.x = 400;
+	    } //end if
+	    else if(enemy.frame == 5)
+	    {
+		srcEnemyRect.x = 500;
+	    } //end if
+	    else if(enemy.frame == 6)
+	    {
+		srcEnemyRect.x = 600;
+	    } //end if
+	    else if(enemy.frame == 7)
+	    {
+		srcEnemyRect.x = 700;
+	    } //end if */
+
+	    collision.playerWallCollision(player.getCollideBox()); //for player
+	    collision.checkFloorCollision(player.getCollideBox()); //for player
+
+enemy.x = 200;
+    enemy.y = 2300;
+	    
+	    //collision.playerWallCollision(enemy.getCollideBox()); //for enemy
+	    //collision.checkFloorCollision(enemy.getCollideBox()); //for enemy
+	    
+	    cout << enemy.y << endl;
+	    
+	    //player.move();
 	    if(player.quit)
 	    {
 		keepGoing = false;
@@ -243,6 +309,9 @@ int Game::run()
 	    dstPlayerRect.x = player.x - cam.x;
 	    dstPlayerRect.y = player.y - cam.y;
 
+	    dstEnemyRect.x = enemy.x - cam.x;
+	    dstEnemyRect.y = enemy.y - cam.y;
+
 	    SDL_UpdateWindowSurface(display.getWindow());	
 	    SDL_SetRenderDrawColor(display.getRenderer(), 80, 80, 80, 255);
 	    SDL_RenderClear(display.getRenderer());		 
@@ -260,6 +329,8 @@ int Game::run()
 	    {
 	      SDL_RenderCopy(display.getRenderer(), world.getIthTile(k)->getTexture(), &srcTileRects[k], &dstTileRects[k]);
 	    } //draw tiles
+
+	    SDL_RenderCopy(display.getRenderer(), enemyTexture.getTexture(), &srcEnemyRect, &dstEnemyRect); //draw enemy
 
 	    SDL_RenderCopy(display.getRenderer(), playerTexture.getTexture(), &srcPlayerRect, &dstPlayerRect); //draw player
 

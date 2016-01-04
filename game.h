@@ -15,6 +15,7 @@
 #include "tile.h"
 #include "world.h"
 #include "player.h"
+#include "enemy.h"
 #include "collision.h"
 
 class Game
@@ -22,10 +23,12 @@ class Game
     private:
         Display display;
 	Texture playerTexture;
+	Texture enemyTexture;
 	textTexture font;
 	//Tile* tiles;
 	World world;
 	Player player;
+	Enemy enemy;
 	//Collision collision;
 
     public:

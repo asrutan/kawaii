@@ -6,12 +6,14 @@
 #define CAMFOCUS_EXIST
 
 #include "player.h"
+#include "enemy.h"
 #include "world.h"
 
 class camFocus
 {
     private:
         Player* player;
+	Enemy* enemy;
         World* world;
         int xTarget;
 	int yTarget;
@@ -21,7 +23,7 @@ class camFocus
 
     public:
         camFocus();
-	camFocus(Player*, World*);
+	camFocus(Player*, Enemy*, World*);
 	~camFocus();
 	void update();
 	void move();

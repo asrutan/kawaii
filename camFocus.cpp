@@ -4,6 +4,7 @@
 
 #include "camFocus.h"
 #include "player.h"
+#include "enemy.h"
 #include "world.h"
 
 using namespace std;
@@ -11,6 +12,7 @@ using namespace std;
 camFocus::camFocus()
 {
     *player = Player();
+    *enemy = Enemy();
     *world = World();
     xTarget = 0; //make target an array (not xtarg ytarg i'm just leaving this here for future reference)
     yTarget = 0;
@@ -20,7 +22,7 @@ camFocus::camFocus()
     y = 0;
 } // end constructor
 
-camFocus::camFocus(Player* p, World* w)
+camFocus::camFocus(Player* p, Enemy* e, World* w)
 {
     xTarget = 0; //make target an array (not xtarg ytarg i'm just leaving this here for future reference)
     yTarget = 0;
@@ -29,6 +31,7 @@ camFocus::camFocus(Player* p, World* w)
     x = 0;
     y = 0;
     player = p;
+    enemy = e;
     world = w;
     campan = true;
 } //end camFocus args
@@ -61,8 +64,8 @@ void camFocus::move()
 } //end move
 void camFocus::update()
 {
-    x = player->x - 400;
-    y = player->y - 300;
+    x = player->x - 350;
+    y = player->y - 400;
 } //end update
 
 /*camFocus::switch(target)

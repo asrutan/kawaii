@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "player.h"
+#include "enemy.h"
 #include "world.h"
 #include "collision.h"
 #include "collideBox.h"
@@ -13,12 +14,14 @@ using namespace std;
 Collision::Collision()
 {
     *player = Player();
+    *enemy = Enemy();
     *world = World();
 }
 
-Collision::Collision(Player* p, World* w)
+Collision::Collision(Player* p, Enemy* e, World* w)
 {
     player = p;
+    enemy = e;
     world = w;
 }
 

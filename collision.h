@@ -6,6 +6,7 @@
 #define COLLISION_EXIST
 
 #include "player.h"
+#include "enemy.h"
 #include "world.h"
 #include "collideBox.h"
 
@@ -13,12 +14,13 @@ class Collision
 {
   private:
     Player* player;
+    Enemy* enemy;
     World* world;
     int playerX;
     int playerY;
   public:
     Collision();
-    Collision(Player*, World*);
+    Collision(Player*, Enemy*, World*);
     ~Collision();
     void playerWallCollision(collideBox);
     void checkFloorCollision(collideBox);
