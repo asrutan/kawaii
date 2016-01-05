@@ -7,22 +7,13 @@
 
 #include "movement.h"
 #include "collideBox.h"
+#include "entity.h"
 
-class Player
+class Player : public Entity
 {
     private:
         Movement movement;
-	collideBox cBox;
-	int speed;
-	bool airbound;
-	bool xCollided;
-	bool yCollided;
-	//bool jumpReady;
-	int yVelocity;
-	int xVelocity;
 	int jumpStrength;
-	int xNew;
-	int ground;
 
     public:
         Player();
@@ -30,21 +21,12 @@ class Player
         void tryMove();
 	void move();
         void update();
-	int getNewX();
 	void fall();
-	collideBox getCollideBox();
 	void checkBottom();
-	void setXCollided(bool);
-	void setYCollided(bool);
-	void setGround(int);
-	void setYVelocity(int);
 	bool animForward;
 	bool animBackward;
 	bool animIdle;
 	bool quit;
-        int x; // CHANGE THESE VALUES BACK TO PRIVATE
-        int y; // THIS IS JUST TO TEST MOVING THE SPRITE IN Game!!!
-	int height; //
 	int frame; //animation frame TEST
 	int tick; //for animation frame TEST
 }; //end Player

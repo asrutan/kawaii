@@ -17,6 +17,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "collision.h"
+#include "background.h"
 
 class Game
 {
@@ -24,11 +25,13 @@ class Game
         Display display;
 	Texture playerTexture;
 	Texture enemyTexture;
+	Texture backgroundTexture;
 	textTexture font;
 	//Tile* tiles;
 	World world;
 	Player player;
 	Enemy enemy;
+	Background background;
 	//Collision collision;
 
     public:

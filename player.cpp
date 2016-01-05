@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include "player.h"
+#include "entity.h"
 #include "movement.h"
 #include "collideBox.h"
 
@@ -11,41 +12,44 @@ using namespace std;
 
 Player::Player()
 {
-    movement;
+    cBox = collideBox(x+50, x+60, y, y + 125);
+    speed = 10;
     airbound = false;
     xCollided = false;
     yCollided = false;
-    //jumpReady = true;
-    jumpStrength = 20;
-    x = 0;
-    xNew = 0;
-    y = 0;
-    cBox = collideBox(x+50, x+60, y, y + 125);
     yVelocity = 0;
     xVelocity = 0;
+    xNew = 0;
+    //end protected inherited vars
+
+    x = 0;
+    y = 0;
     height = 125;
-    speed = 10;
+    width = 10;
+    //end public inherited vars
+
+    movement;
     tick = 0;
     frame = 0;
     //make this an array or list or some shit
     animForward = false;
     animBackward = false;
     animIdle = true;
-    //
     quit = false;
+    jumpStrength = 20;
+    //end new vars
 } //end constructor
 
 Player::~Player()
 {
 } //end deconstructor
 
-void Player::update()
+void Player::update()//changed from entity
 {
     xNew = x;
     movement.keyEvents();
-    xNew = x+xVelocity;
     tryMove();
-    move();
+    //move();
     tick++;
     //cout << frame << endl;
 
@@ -58,13 +62,9 @@ void Player::update()
 	    frame = 0;
 	} //end if
     } //end if
-    /*else{
-	jumpReady = true;
-    } //end if*/
-    //cout << airbound << endl;
 } //end update
 
-void Player::tryMove()
+void Player::tryMove()//changed from entity
 {
     if(movement.right)
     {
@@ -74,8 +74,7 @@ void Player::tryMove()
 	{ 
 	    xVelocity++;
 	} //end if
-        //xNew = x+xVelocity;
-	//x = xNew;
+ 
     } //end if
     else if(!movement.right)
     {
@@ -95,13 +94,12 @@ void Player::tryMove()
 	{ 
 	    xVelocity--;
 	} //end if
-        //xNew = x+xVelocity;
-	//x = xNew;
-        //cout << x << endl;
+
     } //end if
     else if(!movement.left)
     { 
 	animBackward = false;
+	//animIdle = true;
 	if(xVelocity < 0)
 	{ 
 	    xVelocity++;
@@ -121,9 +119,11 @@ void Player::tryMove()
 
     if(!yCollided)
     {
-	airbound = true;
+	//fall();
+      	airbound = true;
     } //end if
-    cBox.update(xNew+50, xNew+60, y, y + 125);
+    
+    cBox.update(xNew + xVelocity + 50, xNew + xVelocity + 60, y, y + 125);
 } //end move
 
 void Player::fall()
@@ -132,7 +132,11 @@ void Player::fall()
     { 
         y = y - yVelocity;
         yVelocity--;
-	cBox.update(x+50, x+60, y, y + 125);
+	if(yVelocity <= -45)
+	{
+	    yVelocity = -45;
+	}
+	//cBox.update(x+50, x+60, y, y + 125);
 	checkBottom();
     }
     else
@@ -144,12 +148,7 @@ void Player::fall()
     }
 } //end fall
 
-collideBox Player::getCollideBox()
-{
-    return cBox;
-}//end getCollideBox
-
-void Player::checkBottom()
+ void Player::checkBottom()
 {
     if(yCollided)
     {
@@ -159,46 +158,18 @@ void Player::checkBottom()
     } //end if
 } //end checkBottom
 
-void Player::setXCollided(bool c)
-{
-    xCollided = c;
-}
-void Player::setYCollided(bool c)
-{
-    yCollided = c;
-}
-void Player::setGround(int g)
-{
-    ground = g;
-}
-void Player::setYVelocity(int v)
-{
-    yVelocity = v;
-}
 void Player::move()
 {
     if(!xCollided)
     {
-        x = xNew;
+        x = xNew + xVelocity;
     }
+    //checkBottom();
     if(airbound)
     {
 	fall();
+	//checkBottom();
     } //end if
-
+    
     cBox.update(x+50, x+60, y, y + 125);
 }
-
-int Player::getNewX()
-{
-    return xNew;
-}
-
-/*void Player::attack()
-{
-    
-} //end attack
-
-
-//if x + 1 collides, x velocity = 0
-//consider the preceding for collision detection */

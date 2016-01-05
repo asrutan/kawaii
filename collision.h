@@ -8,7 +8,7 @@
 #include "player.h"
 #include "enemy.h"
 #include "world.h"
-#include "collideBox.h"
+#include "entity.h"
 
 class Collision
 {
@@ -21,9 +21,10 @@ class Collision
   public:
     Collision();
     Collision(Player*, Enemy*, World*);
+    Collision(World*);
     ~Collision();
-    void playerWallCollision(collideBox);
-    void checkFloorCollision(collideBox);
+    void playerWallCollision(Entity*);
+    void checkFloorCollision(Entity*);
     
 };
 

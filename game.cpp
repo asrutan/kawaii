@@ -16,6 +16,7 @@
 #include "textTexture.h"
 #include "world.h"
 #include "camFocus.h"
+#include "background.h"
 
 using namespace std;
 
@@ -29,6 +30,7 @@ Game::Game()
     //cout << "game Started" << endl;
     playerTexture = Texture(&display);
     enemyTexture = Texture(&display);
+    backgroundTexture = Texture(&display);
     font = textTexture(&display);
     world = World(&display, "map.kwi");
     player = Player();
@@ -55,6 +57,13 @@ bool Game::loadTextures()
 	cout << "Enemy texture failed, son" << endl;
 	success = false;
     } //end if
+
+    if(!backgroundTexture.makeTexture("background.gif"))
+    {
+	cout << "background texture failed my man" << endl;
+	success = false;
+    } //end if
+
     else
     
     if(!font.loadFontMedia("/usr/share/fonts/truetype/fonts-japanese-gothic.ttf"))
@@ -84,7 +93,8 @@ Create an instance of SDL_Event for player input, events change bools to "true"
  */
 int Game::run()
 {   
-    Collision collision = Collision(&player, &enemy, &world);
+    //Collision collision = Collision(&player, &enemy, &world);
+    Collision collision = Collision(&world);
     Hud hud;
     camFocus cam = camFocus(&player, &enemy, &world);
     //hud.init(&playerx);
@@ -94,6 +104,9 @@ int Game::run()
 
     enemy.x = 200;
     enemy.y = 2300;
+
+    background.x = 0;
+    background.y = 1500;
 
     //find a way to get this shit in player or something
     SDL_Rect srcPlayerRect;
@@ -119,6 +132,17 @@ int Game::run()
     dstEnemyRect.y = enemy.y;
     dstEnemyRect.w = 100;
     dstEnemyRect.h = 136;
+
+    SDL_Rect srcBackgroundRect;
+    SDL_Rect dstBackgroundRect;
+    srcBackgroundRect.x = 0;
+    srcBackgroundRect.y = 0;
+    srcBackgroundRect.w = 1920;
+    srcBackgroundRect.h = 1200;
+    dstBackgroundRect.x = background.x;
+    dstBackgroundRect.y = background.y;
+    dstBackgroundRect.w = 1920;
+    dstBackgroundRect.h = 1200;
 
 
     SDL_Rect srcTileRects[world.getTileCount()];
@@ -149,9 +173,9 @@ int Game::run()
     } //end if
     else
     {
-      bool campan = true;
-      cam.x = 0;
-      cam.y = 500;
+        bool campan = true;
+	cam.x = 0;
+	cam.y = 500;
         bool keepGoing = true;
         while(keepGoing)
         {
@@ -277,14 +301,14 @@ int Game::run()
 		srcEnemyRect.x = 700;
 	    } //end if */
 
-	    collision.playerWallCollision(player.getCollideBox()); //for player
-	    collision.checkFloorCollision(player.getCollideBox()); //for player
-
-	    enemy.x = 200; //because collision is broken in enemy
-	    enemy.y = 2300; //because collision is broken in enmy 
+	    collision.playerWallCollision(&player); //for player
+	    player.move();
+	    collision.checkFloorCollision(&player); //for player
+	    //player.move();
 	    
-	    //collision.playerWallCollision(enemy.getCollideBox()); //for enemy
-	    //collision.checkFloorCollision(enemy.getCollideBox()); //for enemy
+	    collision.playerWallCollision(&enemy); //for enemy
+	    enemy.move();
+	    collision.checkFloorCollision(&enemy); //for enemy
 	    
 	    //player.move();
 	    if(player.quit)
@@ -310,6 +334,9 @@ int Game::run()
 	    dstEnemyRect.x = enemy.x - cam.x;
 	    dstEnemyRect.y = enemy.y - cam.y;
 
+	    dstBackgroundRect.x = background.x - cam.x;
+	    dstBackgroundRect.y = background.y - cam.y;
+
 	    SDL_UpdateWindowSurface(display.getWindow());	
 	    SDL_SetRenderDrawColor(display.getRenderer(), 80, 80, 80, 255);
 	    SDL_RenderClear(display.getRenderer());		 
@@ -318,6 +345,8 @@ int Game::run()
 
             SDL_SetRenderDrawColor(display.getRenderer(), 255,255,255,255);
             //SDL_RenderCopy(renderer, textTexture, NULL, NULL);
+
+	    SDL_RenderCopy(display.getRenderer(), backgroundTexture.getTexture(), &srcBackgroundRect, &dstBackgroundRect); //draw background
 
 	    stringstream strs;
 	    strs << "X: " << player.x << "  Y: " << player.y << "Pixels";

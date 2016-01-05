@@ -4,27 +4,34 @@
 #include <iostream>
 #include <cmath>
 #include "enemy.h"
+#include "entity.h"
 #include "collideBox.h"
 
 using namespace std;
 
 Enemy::Enemy()
 {
+    cBox = collideBox(x+50, x+60, y, y + 125);
+    speed = 10;
     airbound = false;
     xCollided = false;
     yCollided = false;
-    //jumpReady = true;
-    x = 0;
-    xNew = 0;
-    y = 0;
-    cBox = collideBox(x+50, x+60, y, y + 125);
     yVelocity = 0;
+    xVelocity = 0;
+    xNew = 0;
+    //end protected inherited vars
+
+    x = 0;
+    y = 0;
     height = 125;
-    speed = 10;
+    width = 10;
+
+    //end public inherited vars
+    left = false;
+    right = true;
     tick = 0;
     frame = 0;
-    //make this an array or list or some shit
-    //
+    //end new vars
 } //end constructor
 
 Enemy::~Enemy()
@@ -34,9 +41,7 @@ Enemy::~Enemy()
 void Enemy::update()
 {
     xNew = x;
-    xNew = x+xVelocity;
     tryMove();
-    move();
     tick++;
     //cout << frame << endl;
 
@@ -53,6 +58,14 @@ void Enemy::update()
 
 void Enemy::tryMove()
 {
+    if(right)
+    {
+	xNew = x + 5;
+    }
+    if(left)
+    {
+	xNew = x - 5;
+    }
     if(!yCollided)
     {
 	airbound = true;
@@ -66,7 +79,11 @@ void Enemy::fall()
     { 
         y = y - yVelocity;
         yVelocity--;
-	cBox.update(x+50, x+60, y, y + 125);
+	if(yVelocity <= -45)
+	{
+	    yVelocity = -45;
+	}
+	//cBox.update(x+50, x+60, y, y + 125);
 	checkBottom();
     }
     else
@@ -78,11 +95,6 @@ void Enemy::fall()
     }
 } //end fall
 
-collideBox Enemy::getCollideBox()
-{
-    return cBox;
-}//end getCollideBox
-
 void Enemy::checkBottom()
 {
     if(yCollided)
@@ -93,27 +105,24 @@ void Enemy::checkBottom()
     } //end if
 } //end checkBottom
 
-void Enemy::setXCollided(bool c)
-{
-    xCollided = c;
-}
-void Enemy::setYCollided(bool c)
-{
-    yCollided = c;
-}
-void Enemy::setGround(int g)
-{
-    ground = g;
-}
-void Enemy::setYVelocity(int v)
-{
-    yVelocity = v;
-}
 void Enemy::move()
 {
     if(!xCollided)
     {
         x = xNew;
+    }
+    else
+    {
+	if(right)
+	{
+	    right = false;
+	    left = true;
+	}
+	else
+	{
+	    right = true;
+	    left = false;
+	}
     }
     if(airbound)
     {
@@ -122,17 +131,3 @@ void Enemy::move()
 
     cBox.update(x+50, x+60, y, y + 125);
 }
-
-int Enemy::getNewX()
-{
-    return xNew;
-}
-
-/*void Player::attack()
-{
-    
-} //end attack
-
-
-//if x + 1 collides, x velocity = 0
-//consider the preceding for collision detection*/
