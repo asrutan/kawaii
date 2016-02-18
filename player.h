@@ -14,6 +14,11 @@ class Player : public Entity
     private:
         Movement movement;
 	int jumpStrength;
+	collideBox aBox;
+	bool attack;
+	int attackCountUp;
+	int attackCountDown;
+	char lastMove;
 
     public:
         Player();
@@ -22,7 +27,11 @@ class Player : public Entity
 	void move();
         void update();
 	void fall();
+	int getXCollided();
+	bool attackCheck();
+	void attackAction(Entity*);
 	void checkBottom();
+	void hit();
 	bool animForward;
 	bool animBackward;
 	bool animIdle;

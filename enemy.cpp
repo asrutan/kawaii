@@ -2,7 +2,6 @@
 // Alex Rutan
 // 1//3/16
 #include <iostream>
-#include <cmath>
 #include "enemy.h"
 #include "entity.h"
 #include "collideBox.h"
@@ -14,7 +13,7 @@ Enemy::Enemy()
     cBox = collideBox(x+50, x+60, y, y + 125);
     speed = 10;
     airbound = false;
-    xCollided = false;
+    xCollided = 0;
     yCollided = false;
     yVelocity = 0;
     xVelocity = 0;
@@ -71,6 +70,7 @@ void Enemy::tryMove()
 	airbound = true;
     } //end if
     cBox.update(xNew+50, xNew+60, y, y + 125);
+    
 } //end move
 
 void Enemy::fall()
@@ -83,7 +83,6 @@ void Enemy::fall()
 	{
 	    yVelocity = -45;
 	}
-	//cBox.update(x+50, x+60, y, y + 125);
 	checkBottom();
     }
     else
@@ -107,7 +106,7 @@ void Enemy::checkBottom()
 
 void Enemy::move()
 {
-    if(!xCollided)
+    if(xCollided == 0)
     {
         x = xNew;
     }
@@ -130,4 +129,9 @@ void Enemy::move()
     } //end if
 
     cBox.update(x+50, x+60, y, y + 125);
+}
+
+void Enemy::hit()
+{
+    cout << "Enemy OW!!" << endl;
 }

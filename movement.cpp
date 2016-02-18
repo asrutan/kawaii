@@ -3,7 +3,6 @@
 // 11/21/15
 #include <iostream>
 #include <SDL2/SDL.h>
-#include <cmath>
 #include "movement.h"
 
 using namespace std;
@@ -15,6 +14,7 @@ Movement::Movement()
     left = false;
     right = false;
     jump = false;
+    attack = false;
 } //end constructor
 
 Movement::~Movement()
@@ -23,6 +23,7 @@ Movement::~Movement()
     left = false;
     right = false;
     jump = false;
+    attack = false;
 } //end destructor
 
 void Movement::keyEvents()
@@ -47,6 +48,10 @@ void Movement::keyEvents()
             {
                 setTrue(&jump);
             } //end if
+	    if(event.key.keysym.sym == SDLK_z)
+	    {
+		setTrue(&attack);
+	    }
         } //end if
     
         if(event.type == SDL_KEYUP)
@@ -63,6 +68,10 @@ void Movement::keyEvents()
             {
                 setFalse(&jump);
             } //end if
+	    if(event.key.keysym.sym == SDLK_z)
+	    {
+		setFalse(&attack);
+	    }
         } //end if
     } //end while
 } //end keyEvents

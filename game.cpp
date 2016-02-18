@@ -3,20 +3,22 @@
 // 4/1/15
 #include <iostream>
 #include <sstream>
-#include <SDL2/SDL.h>
-#include "SDL2/SDL_image.h"
-#include "SDL2/SDL_ttf.h"
-#include <string>
+//#include <SDL2/SDL.h>
+//#include "SDL2/SDL_image.h"
+//#include "SDL2/SDL_ttf.h"
+//#include <string>
 #include "game.h"
 #include "hud.h"
-#include "player.h"
-#include "enemy.h"
-#include "display.h"
-#include "texture.h"
-#include "textTexture.h"
-#include "world.h"
-#include "camFocus.h"
-#include "background.h"
+//#include "entity.h"
+//#include "player.h"
+//#include "enemy.h"
+//#include "trackerEnemy.h"
+//#include "display.h"
+//#include "texture.h"
+//#include "textTexture.h"
+//#include "world.h"
+//#include "camFocus.h"
+//#include "background.h"
 
 using namespace std;
 
@@ -27,14 +29,13 @@ initializes values used by SDL for renderer, window, and textures
  */
 Game::Game()
 {
-    //cout << "game Started" << endl;
     playerTexture = Texture(&display);
     enemyTexture = Texture(&display);
     backgroundTexture = Texture(&display);
     font = textTexture(&display);
-    world = World(&display, "map.kwi");
+    world = World(&display, "stickyMap.kwi");
     player = Player();
-    enemy = Enemy();
+    enemy = trackerEnemy();
     //cout << "Game constructed" << endl;
 
 } //end constructor
@@ -73,11 +74,22 @@ bool Game::loadTextures()
     }
     for(int i = 0; i < world.getTileCount(); i++)
     {
-        if(!world.getIthTile(i)->textureTile("blocks.png"))
-        {
-  	    cout << "tile texture failed" << endl;
-	    success = false;
-        }
+	if(world.getIthTile(i)->getTag() == 1)
+	{
+	    if(!world.getIthTile(i)->textureTile("blocks.png"))
+	    {
+		cout << "tile texture failed" << endl;
+		success = false;
+	    }
+	}
+	else if(world.getIthTile(i)->getTag() == 2)
+	{
+	    if(!world.getIthTile(i)->textureTile("stickyBlock.png"))
+	    {
+		cout << "tile texture failed" << endl;
+		success = false;
+	    }
+	}
     }
     
     return success;
@@ -100,13 +112,13 @@ int Game::run()
     //hud.init(&playerx);
 
     player.x = 100;
-    player.y = 2300;
+    player.y = 600;
 
     enemy.x = 200;
-    enemy.y = 2300;
+    enemy.y = 600;
 
     background.x = 0;
-    background.y = 1500;
+    background.y = 0;
 
     //find a way to get this shit in player or something
     SDL_Rect srcPlayerRect;
@@ -179,7 +191,11 @@ int Game::run()
         bool keepGoing = true;
         while(keepGoing)
         {
+
+	    /**************/
 	    player.update(); //update player
+	    /**************/
+
 	    if(player.animForward)
 	    {
 		srcPlayerRect.y = 0;
@@ -266,7 +282,9 @@ int Game::run()
 		srcPlayerRect.x = 0;
 	    } //end else
 
-	    enemy.update(); //update enemy
+            /********************/
+	    enemy.update(&player); //update enemy
+	    /********************/
 
 	    if(enemy.frame < 1)
 	    {
@@ -301,14 +319,22 @@ int Game::run()
 		srcEnemyRect.x = 700;
 	    } //end if */
 
-	    collision.playerWallCollision(&player); //for player
-	    player.move();
-	    collision.checkFloorCollision(&player); //for player
-	    //player.move();
+	    collision.playerWallCollision(&player); //is player hitting walls
+	    player.move(); //values updated in collision & player, so move is called here
+	    collision.checkFloorCollision(&player); //is player colliding above or below. placed after move to avoid getting stuck in floor
+	    if(player.attackCheck())//is player attacking
+	    {
+		//player checks if enemy's collide box is in player's attack box
+		player.attackAction(&enemy);//check list of enemies (in area?)
+	    }
 	    
 	    collision.playerWallCollision(&enemy); //for enemy
 	    enemy.move();
 	    collision.checkFloorCollision(&enemy); //for enemy
+	    if(enemy.attackCheck())
+	    {
+		enemy.attackAction(&player);
+	    }
 	    
 	    //player.move();
 	    if(player.quit)
@@ -354,7 +380,7 @@ int Game::run()
 
 	    for(int k = 0; k < world.getTileCount(); k++)
 	    {
-	      SDL_RenderCopy(display.getRenderer(), world.getIthTile(k)->getTexture(), &srcTileRects[k], &dstTileRects[k]);
+	        SDL_RenderCopy(display.getRenderer(), world.getIthTile(k)->getTexture(), &srcTileRects[k], &dstTileRects[k]);
 	    } //draw tiles
 
 	    SDL_RenderCopy(display.getRenderer(), enemyTexture.getTexture(), &srcEnemyRect, &dstEnemyRect); //draw enemy

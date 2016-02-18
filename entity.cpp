@@ -11,9 +11,11 @@ using namespace std;
 Entity::Entity()
 {
     cBox = collideBox(x, x+50, y, y + 50);
+    spriteX = 0;
+    spriteY = 0;
     speed = 0;
     airbound = false;
-    xCollided = false;
+    xCollided = 0;
     yCollided = false;
     yVelocity = 0;
     xVelocity = 0;
@@ -84,7 +86,6 @@ void Entity::fall()
 	{
 	    yVelocity = -45;
 	}
-	//cBox.update(x, x + width, y, y + height);
 	checkBottom();
     }
     else
@@ -95,6 +96,11 @@ void Entity::fall()
 	yCollided = true;
     }
 } //end fall
+
+void Entity::hit()
+{
+  cout << "OW!!" << endl;
+}
 
 collideBox* Entity::getCollideBox()
 {
@@ -111,7 +117,7 @@ void Entity::checkBottom()
     } //end if
 } //end checkBottom
 
-void Entity::setXCollided(bool c)
+void Entity::setXCollided(int c)
 {
     xCollided = c;
 }
@@ -119,11 +125,6 @@ void Entity::setYCollided(bool c)
 {
     yCollided = c;
 }
-/*void Entity::setGround(int g)
-{
-    ground = g;
-}
-*/
 void Entity::setX(int xNew)
 {
     x = xNew;
@@ -142,7 +143,7 @@ void Entity::setXVelocity(int v)
 }
 void Entity::move()
 {
-    if(!xCollided)
+    if(xCollided == 0)
     {
         x = xNew + xVelocity;
     }

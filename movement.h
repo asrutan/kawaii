@@ -20,6 +20,7 @@ class Movement
 	bool left;    //
 	bool jump;    //
         bool right;   //Maybe like a list or something with pointers idk.
+	bool attack;
 	void keyEvents();
         void setTrue(bool*);
 	void setFalse(bool*);

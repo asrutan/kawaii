@@ -22,18 +22,21 @@ class Tile
        int tileH;
        int posX;
        int posY;
+       int myTag;
        collideBox cBox;
     public:
        Tile();
-       Tile(Display*, int, int);
+       Tile(Display*, int, int, int);
        ~Tile();
        int getTileWidth();
        int getTileHeight();
        int getXPos();
        int getYPos();
+       int getTag();
        collideBox getCollideBox();
        void setXPos(int);
        void setYPos(int);
+       void setTag(int);
        bool textureTile(std::string);
        SDL_Texture* getTexture();
 };

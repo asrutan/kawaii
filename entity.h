@@ -13,23 +13,26 @@ class Entity
 	collideBox cBox;
 	int speed;
 	bool airbound;
-	bool xCollided;
+	int xCollided;
 	bool yCollided;
 	int yVelocity;
 	int xVelocity;
 	int xNew;
+	int spriteX;
+	int spriteY;
 
     public:
         Entity();
         ~Entity();
-        void tryMove();
-	void move();
-        void update();
+        virtual void tryMove();
+	virtual void move();
+        virtual void update();
 	int getNewX();
 	void fall();
+	virtual void hit();
 	collideBox* getCollideBox();
 	void checkBottom();
-	void setXCollided(bool);
+	void setXCollided(int);
 	void setYCollided(bool);
 	void setYVelocity(int);
 	void setXVelocity(int);
@@ -39,7 +42,7 @@ class Entity
         int y; // THIS IS JUST TO TEST MOVING THE SPRITE IN Game!!!
 	bool left;
 	bool right;
-	int height; //
+	int height;
 	int width;
 }; //end Enemy
 

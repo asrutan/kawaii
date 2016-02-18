@@ -3,13 +3,7 @@
 //11/22/15
 
 #include <iostream>
-#include <SDL2/SDL.h>
-#include "SDL2/SDL_image.h"
-#include <string>
-#include "display.h"
-#include "texture.h"
 #include "tile.h"
-#include "collideBox.h"
 
 using namespace std;
 
@@ -20,16 +14,18 @@ Tile::Tile()
     tileH = 50;
     posX = 0;
     posY = 0;
+    myTag = 1;
     cBox = collideBox(posX, posX + tileW, posY, posY + tileH);
 }
 
-Tile::Tile(Display* d, int x, int y)
+Tile::Tile(Display* d, int x, int y, int tag)
 {
     display = d;
     tileW = 50;
     tileH = 50;
     posX = x;
     posY = y;
+    myTag = tag;
     texture = Texture(display);
     cBox = collideBox(posX, posX + tileW, posY, posY + tileH);
     myTexture = NULL;
@@ -54,6 +50,16 @@ int Tile::getXPos()
     return posX;
 }
 
+int Tile::getYPos()
+{
+    return posY;
+}
+
+int Tile::getTag()
+{
+    return myTag;
+}
+
 void Tile::setXPos(int x)
 {
     posX = x;
@@ -64,9 +70,9 @@ void Tile::setYPos(int y)
     posY = y;
 }
 
-int Tile::getYPos()
+void Tile::setTag(int tag)
 {
-    return posY;
+    myTag = tag;
 }
 
 collideBox Tile::getCollideBox()
@@ -85,7 +91,6 @@ bool Tile::textureTile(string path)
     {
         myTexture = texture.getTexture();
     }
-    //cout << success << endl;
     return success;
 }
 

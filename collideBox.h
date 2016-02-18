@@ -21,6 +21,7 @@ class collideBox
     int getY1();
     int getY2();
     void update(int,int,int,int);
+    bool contains(collideBox);
 };
 
 #endif

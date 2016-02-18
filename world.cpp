@@ -29,10 +29,10 @@ World::World(Display* d)
 	//tiles[i] = Tile(&display, (i * (xOffset * 2)/* + xOffset*/), (i * (yOffset * 2)/* - yOffset*/));//Makes stairway of tiles across screen
 	//tiles[i] = Tile(&display, 0, 0);//Puts all tiles in same spot
 	//tiles[i] = Tile(&display, (i * (xOffset * 2)/* + xOffset*/), 0/*(i * (yOffset * 2)/* - yOffset)*/);//Makes line of tiles across top of screen
-	tiles.push_back(Tile(d, 0/*(i * (xOffset * 2)/* + xOffset)*/,(i * (yOffset * 2)/* - yOffset*/)));//Makes line of tiles across left-hand side of screen
+	tiles.push_back(Tile(d, 0/*(i * (xOffset * 2)/* + xOffset)*/,(i * (yOffset * 2)/* - yOffset*/), 1));//Makes line of tiles across left-hand side of screen
     }//end for
-    tiles.push_back(Tile(d,50,(12*50)));
-    tiles.push_back(Tile(d,100,(12*50)));
+    tiles.push_back(Tile(d,50,(12*50), 1));
+    tiles.push_back(Tile(d,100,(12*50), 1));
 }
 
 World::World(Display* d, string fileName)
@@ -71,6 +71,8 @@ void World::loadWorld(string fileName, Display* d)
 
     int worldWidth = -1;
     int worldHeight = -1;
+
+    //*** 1st Column gets shifted up by one.*** 
 
     if(file.is_open())
     {
@@ -145,10 +147,11 @@ void World::loadWorld(string fileName, Display* d)
 				}
 				else if(temp == "1")
 				{
-				    tiles.push_back(Tile(d, col * 50, row * 50));
+				    tiles.push_back(Tile(d, col * 50, row * 50, 1));
 				}
 				else if(temp == "2")
 				{
+				    tiles.push_back(Tile(d, col * 50, row * 50, 2));
 				    //player position?
 				}
 				//3 = enemies?
@@ -181,10 +184,11 @@ void World::loadWorld(string fileName, Display* d)
 			{
 			    if(data == "1")
 			    {
-				tiles.push_back(Tile(d, col * 50, row * 50));
+				tiles.push_back(Tile(d, col * 50, row * 50, 1));
 			    }
 			    else if(data == "2")
 			    {
+				tiles.push_back(Tile(d, col * 50, row * 50, 2));
 				//player position?
 			    }
 			    //3 = enemies?
@@ -195,7 +199,7 @@ void World::loadWorld(string fileName, Display* d)
 		    }//end col check
 		}//end row check
 	    }//end while
-	    tiles.push_back(Tile(d,0,(worldHeight - 1) * 50));
+	    tiles.push_back(Tile(d,0,(worldHeight - 1) * 50, 1));//added to bottom left corner. missing b/c of upward shift issue.
 	}//end read width & height check
     }
     else

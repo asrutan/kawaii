@@ -16,6 +16,9 @@
 #include "world.h"
 #include "player.h"
 #include "enemy.h"
+#include "entity.h"
+#include "camFocus.h"
+#include "trackerEnemy.h"
 #include "collision.h"
 #include "background.h"
 
@@ -30,7 +33,7 @@ class Game
 	//Tile* tiles;
 	World world;
 	Player player;
-	Enemy enemy;
+	trackerEnemy enemy;
 	Background background;
 	//Collision collision;
 

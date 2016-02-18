@@ -16,10 +16,11 @@ class Enemy : public Entity
     public:
         Enemy();
         ~Enemy();
-        void tryMove();
-	void move();
-        void update();
+        virtual void tryMove();
+	virtual void move();
+        virtual void update();
 	void fall();
+	virtual void hit();
 	void checkBottom();
 	bool left;
 	bool right;
